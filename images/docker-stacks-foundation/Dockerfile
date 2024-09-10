@@ -3,7 +3,10 @@
 
 # Ubuntu 24.04 (noble)
 # https://hub.docker.com/_/ubuntu/tags?page=1&name=noble
-ARG ROOT_CONTAINER=ubuntu:24.04
+ARG BASE_REGISTRY=201959883603.dkr.ecr.us-east-2.amazonaws.com
+ARG BASE_IMAGE=mdaca/base-images/ironbank-ubuntu
+ARG BASE_TAG=22.04_stable
+ARG ROOT_CONTAINER=${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 
 FROM $ROOT_CONTAINER
 
