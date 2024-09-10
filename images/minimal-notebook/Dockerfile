@@ -1,7 +1,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 ARG BASE_REGISTRY=201959883603.dkr.ecr.us-east-2.amazonaws.com
-ARG BASE_IMAGE=mdaca/jupyter/jupyter-docker-stacks-foundation
+ARG BASE_IMAGE=mdaca/jupyter/jupyter-base-notebook
 ARG BASE_TAG=5.1.0
 ARG ROOT_CONTAINER=${BASE_REGISTRY}/${BASE_IMAGE}:${BASE_TAG}
 
