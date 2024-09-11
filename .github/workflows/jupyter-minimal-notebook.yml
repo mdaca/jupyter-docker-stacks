@@ -28,7 +28,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: us-east-2
           IMAGE_TAG: 5.1.0
-          ECR_REPOSITORY: mdaca/jupyter/jupyter-base-notebook
+          ECR_REPOSITORY: mdaca/jupyter/jupyter-minimal-notebook
         run: |
           # Set ENV for AW Cred
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
@@ -40,12 +40,12 @@ jobs:
           IMAGE_TAG=5.1.0
  
           # Set ENV for Docker build
-          ECR_REPOSITORY=mdaca/jupyter/jupyter-base-notebook
+          ECR_REPOSITORY=mdaca/jupyter/jupyter-minimal-notebook
           REPOSITORY=$ECR_REPOSITORY
           REGISTRY=201959883603.dkr.ecr.us-east-2.amazonaws.com
 
           # Build the Docker image
-          docker -f images/base-notebook/Dockerfile build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker -f images/minimal-notebook/Dockerfile build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
 
           # Push the Docker image
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
@@ -65,7 +65,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           IMAGE_TAG: 5.1.0
-          ECR_REPOSITORY: mdaca/jupyter/jupyter-base-notebook
+          ECR_REPOSITORY: mdaca/jupyter/jupyter-minimal-notebook
         run: |
           # Set ENV for AW Cred
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
@@ -87,7 +87,7 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           IMAGE_TAG: 5.1.0
-          ECR_REPOSITORY: mdaca/jupyter/jupyter-base-notebook
+          ECR_REPOSITORY: mdaca/jupyter/jupyter-minimal-notebook
         run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
 
@@ -100,7 +100,7 @@ jobs:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
           AWS_REGION: ${{ secrets.AWS_REGION }}
           IMAGE_TAG: 5.1.0
-          ECR_REPOSITORY: mdaca/jupyter/jupyter-base-notebook
+          ECR_REPOSITORY: mdaca/jupyter/jupyter-minimal-notebook
         run: |
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > sbom.tf
