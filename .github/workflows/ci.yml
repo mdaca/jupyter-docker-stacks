@@ -1,37 +1,47 @@
-name: Build and Push Docker Image to ECR
+###################################################################################
+#        #######      ##     ##       ##########      ##         ########         #
+#        ##    ##     ##     ##           ##          ##         ##     ##        #
+#        ##   ##      ##     ##           ##          ##         ##      ##       #
+#        ## ##        ##     ##           ##          ##         ##       ##      #
+#        ##   ##      ##     ##           ##          ##         ##      ##       #
+#        ##    ##     ##     ##           ##          ##         ##     ##        #
+#        #######      #########       ##########      #######    #########        #
+###################################################################################
+name: Build and Push Docker Images to ECR
 
 on:
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-
-      - name: Set up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
-
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker-stacks-foundation Docker Image
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: us-east-2
           IMAGE_TAG: 5.1.0
           ECR_REPOSITORY: mdaca/jupyter/jupyter-docker-stacks-foundation
         run: |
-          # Build Docker Image
-          docker buildx build --tag $ECR_REPOSITORY:$IMAGE_TAG .
+          # Set ENV for AW Cred
+          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+          aws configure set default.region $AWS_REGION
 
-          # Authenticate Docker with ECR
-          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY
+          # Get token from ECR and Docker login
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+          IMAGE_TAG=5.1.0
 
-          # Push Docker Image to ECR
-          docker push $ECR_REPOSITORY:$IMAGE_TAG
+          # Set ENV for Docker build
+          ECR_REPOSITORY=mdaca/jupyter/jupyter-docker-stacks-foundation
+          REPOSITORY=$ECR_REPOSITORY
+          REGISTRY=201959883603.dkr.ecr.us-east-2.amazonaws.com
+
+          # Build the Docker image
+          docker build -f images/docker-stacks-foundation/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
