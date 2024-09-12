@@ -1,4 +1,4 @@
-nname: Build and Push Docker Image to ECR
+name: Build and Push Docker Image to ECR
 
 on:
   push:
@@ -35,4 +35,4 @@ jobs:
           REPOSITORY=$ECR_REPOSITORY
           REGISTRY=201959883603.dkr.ecr.us-east-2.amazonaws.com
           # Build the Docker image
-          docker build -f images/docker-stacks-foundation/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
+          docker build -f images/docker-stacks-foundation/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG images/docker-stacks-foundation
