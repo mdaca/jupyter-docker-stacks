@@ -24,11 +24,11 @@ USER root
 # Install all OS dependencies for the Server that starts
 # but lacks all features (e.g., download as all possible file formats)
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -y --force-confold && \
+RUN apt-get update && \
     # - `apt-get upgrade` is run to patch known vulnerabilities in system packages
     #   as the Ubuntu base image is rebuilt too seldom sometimes (less than once a month)
-    apt-get upgrade -y --force-confold && \
-    apt-get install -y --force-confold-recommends \
+    apt-get upgrade && \
+    apt-get install -y \
     # - bzip2 is necessary to extract the micromamba executable.
     bzip2 \
     ca-certificates \
