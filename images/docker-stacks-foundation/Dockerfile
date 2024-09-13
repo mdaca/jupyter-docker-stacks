@@ -24,10 +24,10 @@ USER root
 # Install all OS dependencies for the Server that starts
 # but lacks all features (e.g., download as all possible file formats)
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update --yes && \
+RUN apt-get update --yes --no-install-recommends && \
     # - `apt-get upgrade` is run to patch known vulnerabilities in system packages
     #   as the Ubuntu base image is rebuilt too seldom sometimes (less than once a month)
-    apt-get upgrade --yes && \
+    #apt-get upgrade --yes && \
     #apt-get install --yes --no-install-recommends \
     # - bzip2 is necessary to extract the micromamba executable.
     #bzip2 \
@@ -43,10 +43,10 @@ RUN apt-get update --yes && \
     #   See https://github.com/krallin/tini#why-tini for details
     #tini \
     #wget && \
-    apt-get clean && rm -rf /var/lib/apt/lists/* && \
-    echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    echo "C.UTF-8 UTF-8" >> /etc/locale.gen && \
-    locale-gen
+    #apt-get clean && rm -rf /var/lib/apt/lists/* && \
+    #echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    #echo "C.UTF-8 UTF-8" >> /etc/locale.gen && \
+    #locale-gen
 
 # Configure environment
 ENV CONDA_DIR=/opt/conda \
