@@ -24,7 +24,7 @@ USER root
 # Install all OS dependencies for the Server that starts
 # but lacks all features (e.g., download as all possible file formats)
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get install --yes \
+RUN apt-get update -y &&  apt-get install -y
     # - bzip2 is necessary to extract the micromamba executable.
     bzip2 \
     ca-certificates \
