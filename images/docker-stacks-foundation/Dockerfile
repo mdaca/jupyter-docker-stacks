@@ -27,7 +27,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update --yes && \
     # - `apt-get upgrade` is run to patch known vulnerabilities in system packages
     #   as the Ubuntu base image is rebuilt too seldom sometimes (less than once a month)
-    apt-get -y -o Dpkg::Options::="--force-confold" upgrade && \
+    apt-get -y -o Dpkg::Options::="--force-confnew" upgrade && \
     apt-get install --yes --no-install-recommends \
     # - bzip2 is necessary to extract the micromamba executable.
     bzip2 \
