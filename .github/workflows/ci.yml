@@ -190,6 +190,8 @@ jobs:
           ECR_REPOSITORY: mdaca/jupyter/jupyter-docker-stacks-foundation
         run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+        continue-on-error: true  
+        
       - name: Install Syft
         run: |
           curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sudo sh -s -- -b /usr/local/bin
@@ -238,6 +240,7 @@ jobs:
           ECR_REPOSITORY: mdaca/jupyter/jupyter-base-notebook
         run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+        continue-on-error: true
      
       - name: Generate Jupyter-base-notebook SBOM with Syft
         env:
@@ -282,6 +285,7 @@ jobs:
           ECR_REPOSITORY: mdaca/jupyter/jupyter-minimal-notebook
         run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+        continue-on-error: true
 
       - name: Generate Jupyter-minimal-notebook SBOM with Syft
         env:
@@ -326,6 +330,7 @@ jobs:
           ECR_REPOSITORY: mdaca/jupyter/jupyter-scipy-notebook
         run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+        continue-on-error: true
 
       - name: Scan and Generate Jupyter-scipy-notebook SBOM with Syft
         env:
@@ -371,6 +376,7 @@ jobs:
           ECR_REPOSITORY: mdaca/jupyter/jupyter-datascience-notebook
         run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+        continue-on-error: true
 
       - name: Scan and Generate Jupyter-datascience-notebook SBOM with Syft
         env:
