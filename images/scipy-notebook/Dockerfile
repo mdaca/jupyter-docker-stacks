@@ -73,7 +73,7 @@ RUN git clone https://github.com/PAIR-code/facets && \
 
 # Import matplotlib the first time to build the font cache
 RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
-    fix-permissions "/home/${NB_USER}" && apt remove build-essential --yes
+    fix-permissions "/home/${NB_USER}"
 
 USER ${NB_UID}
 
