@@ -81,7 +81,6 @@ jobs:
           # push latest Docker Image
           docker push $REGISTRY/$REPOSITORY:latest
 
-
       - name: Build and Push Jupyter-minimal-notebook Docker Image
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
