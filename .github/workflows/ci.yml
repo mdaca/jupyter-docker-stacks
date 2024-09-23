@@ -40,7 +40,13 @@ jobs:
 
           # Push the Docker image
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          
+
+          # Add latest tag
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+
+          # push latest Docker Image
+          docker push $REGISTRY/$REPOSITORY:latest
+
       - name: Build and Push Jupyter-base-notebook Docker Image
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -67,7 +73,14 @@ jobs:
           docker build -f images/base-notebook/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG images/base-notebook
 
           # Push the Docker image
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG   
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+          # Add latest tag
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+
+          # push latest Docker Image
+          docker push $REGISTRY/$REPOSITORY:latest
+
 
       - name: Build and Push Jupyter-minimal-notebook Docker Image
         env:
@@ -97,6 +110,13 @@ jobs:
           # Push the Docker image
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
+          # Add latest tag
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+
+          # push latest Docker Image
+          docker push $REGISTRY/$REPOSITORY:latest
+
+
       - name: Build and Push jupyter-scipy-notebook Docker Image
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -125,6 +145,13 @@ jobs:
           # Push the Docker image
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
+          # Add latest tag
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+
+          # push latest Docker Image
+          docker push $REGISTRY/$REPOSITORY:latest
+
+
       - name: Build and Push Jupyter DataScience-notbook Docker Image
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -152,6 +179,13 @@ jobs:
 
           # Push the Docker image
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+          # Add latest tag
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+
+          # push latest Docker Image
+          docker push $REGISTRY/$REPOSITORY:latest
+
 
 
   security:
@@ -189,8 +223,9 @@ jobs:
           IMAGE_TAG: 5.1.0
           ECR_REPOSITORY: mdaca/jupyter/jupyter-docker-stacks-foundation
         run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-        continue-on-error: true  
+          trivy image --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          trivy image --format json $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > Jupyter-Docker-Stacks-Foundation.json
+          jq -r '.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | [.SeveritySource, .VulnerabilityID, .PkgName, .PkgPath, .InstalledVersion, .FixedVersion, .Status, .Severity] | @csv' Jupyter-Docker-Stacks-Foundation.json > Jupyter-Docker-Stacks-Foundation-Trivy.csv  
         
       - name: Install Syft
         run: |
@@ -207,9 +242,10 @@ jobs:
       - name: Upload Jupyter Docker-Stacks-Foundation SBOM
         uses: actions/upload-artifact@v4
         with:
-          name: Jupyter-Docker-Stacks-Foundation-sbom.tf
-          path: Jupyter-Docker-Stacks-Foundation-sbom.tf
-
+          name: trivy-and-sbom-reports
+          path: |
+            Jupyter-Docker-Stacks-Foundation-Trivy.csv
+            Jupyter-Docker-Stacks-Foundation-sbom.tf
 
 
 
@@ -239,8 +275,9 @@ jobs:
           IMAGE_TAG: 5.1.0
           ECR_REPOSITORY: mdaca/jupyter/jupyter-base-notebook
         run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-        continue-on-error: true
+          trivy image --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          trivy image --format json $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > Jupyter-base-notebook.json
+          jq -r '.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | [.SeveritySource, .VulnerabilityID, .PkgName, .PkgPath, .InstalledVersion, .FixedVersion, .Status, .Severity] | @csv' Jupyter-base-notebook.json > Jupyter-base-notebook-Trivy.csv  
      
       - name: Generate Jupyter-base-notebook SBOM with Syft
         env:
@@ -252,10 +289,11 @@ jobs:
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-base-notebook-sbom.tf
       - name: Upload Jupyter-base-notebook SBOM
-        uses: actions/upload-artifact@v4
         with:
-          name: Jupyter-base-notebook-sbom
-          path: Jupyter-base-notebook-sbom.tf
+          name: trivy-and-sbom-reports
+          path: |
+            Jupyter-base-notebook-Trivy.csv
+            Jupyter-base-notebook-sbom.tf
 
 
 
@@ -284,9 +322,9 @@ jobs:
           IMAGE_TAG: 5.1.0
           ECR_REPOSITORY: mdaca/jupyter/jupyter-minimal-notebook
         run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-        continue-on-error: true
-
+          trivy image --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          trivy image --format json $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > Jupyter-minimal-notebook.json
+          jq -r '.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | [.SeveritySource, .VulnerabilityID, .PkgName, .PkgPath, .InstalledVersion, .FixedVersion, .Status, .Severity] | @csv' Jupyter-minimal-notebook.json > Jupyter-minimal-notebook-Trivy.csv
       - name: Generate Jupyter-minimal-notebook SBOM with Syft
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -297,10 +335,11 @@ jobs:
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-minimal-notebook-sbom.tf
       - name: Upload Jupyter-minimal-notebook SBOM
-        uses: actions/upload-artifact@v4
         with:
-          name: Jupyter-minimal-notebook-sbom
-          path: Jupyter-minimal-notebook-sbom.tf
+          name: trivy-and-sbom-reports
+          path: |
+            Jupyter-minimal-notebook-Trivy.csv
+            Jupyter-minimal-notebook-sbom.tf
 
 
 
@@ -329,8 +368,9 @@ jobs:
           IMAGE_TAG: 5.1.0
           ECR_REPOSITORY: mdaca/jupyter/jupyter-scipy-notebook
         run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-        continue-on-error: true
+          trivy image --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          trivy image --format json $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > jupyter-scipy-notebook.json
+          jq -r '.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | [.SeveritySource, .VulnerabilityID, .PkgName, .PkgPath, .InstalledVersion, .FixedVersion, .Status, .Severity] | @csv' jupyter-scipy-notebook.json > jupyter-scipy-notebook-Trivy.csv
 
       - name: Scan and Generate Jupyter-scipy-notebook SBOM with Syft
         env:
@@ -340,12 +380,13 @@ jobs:
           ECR_REPOSITORY: mdaca/jupyter/jupyter-scipy-notebook
         run: |
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-          syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-scipy-notebook-sbom.tf
+          syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > jupyter-scipy-notebook-sbom.tf
       - name: Upload Jupyter-scipy-notebook SBOM
-        uses: actions/upload-artifact@v4
         with:
-          name: Jupyter-scipy-notebook-sbom
-          path: Jupyter-scipy-notebook-sbom.tf  
+          name: trivy-and-sbom-reports
+          path: |
+            jupyter-scipy-notebook-Trivy.csv
+            jupyter-scipy-notebook-sbom.tf
 
      
       - name: Download Jupyter-datascience-notebook Docker Image from ECR
@@ -375,8 +416,9 @@ jobs:
           IMAGE_TAG: 5.1.0
           ECR_REPOSITORY: mdaca/jupyter/jupyter-datascience-notebook
         run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
-        continue-on-error: true
+          trivy image --severity HIGH,CRITICAL $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          trivy image --format json $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG > Jupyter-datascience-notebook.json
+          jq -r '.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | [.SeveritySource, .VulnerabilityID, .PkgName, .PkgPath, .InstalledVersion, .FixedVersion, .Status, .Severity] | @csv' Jupyter-datascience-notebook.json > Jupyter-datascience-notebook-Trivy.csv
 
       - name: Scan and Generate Jupyter-datascience-notebook SBOM with Syft
         env:
@@ -389,7 +431,8 @@ jobs:
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-datascience-notebook-sbom.tf
 
       - name: Upload Jupyter-datascience-notebook SBOM
-        uses: actions/upload-artifact@v4
         with:
-          name: Jupyter-datascience-notebook-sbom
-          path: Jupyter-datascience-notebook-sbom.tf
+          name: trivy-and-sbom-reports
+          path: |
+            Jupyter-datascience-notebook-Trivy.csv
+            Jupyter-datascience-notebook-sbom.tf
