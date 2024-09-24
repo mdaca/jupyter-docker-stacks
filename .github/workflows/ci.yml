@@ -173,7 +173,7 @@ jobs:
 
           # push latest Docker Image
           docker push $REGISTRY/$REPOSITORY:latest
-security:
+  security:
     runs-on: ubuntu-latest
     needs: build
 
