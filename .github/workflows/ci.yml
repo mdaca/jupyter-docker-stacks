@@ -222,13 +222,6 @@ jobs:
         run: |
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-Docker-Stacks-Foundation-sbom.tf
-      - name: Upload Reports
-        uses: actions/upload-artifact@v4
-        with:
-           name: trivy-and-sbom-reports
-           path: |
-             Jupyter-Docker-Stacks-Foundation-Trivy.csv
-             Jupyter-Docker-Stacks-Foundation-sbom.tf
       - name: Download Jupyter-base-notebook Docker Image from ECR       
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -265,13 +258,7 @@ jobs:
         run: |
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-base-notebook-sbom.tf
-      - name: Upload Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-and-sbom-reports
-          path: |
-            Jupyter-hub-Trivy.csv
-            Jupyter-hub-sbom.tf
+     
       - name: Scan Jupyter-minimal-notebook Docker Image with Trivy
         env:
           AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
@@ -291,14 +278,6 @@ jobs:
         run: |
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > Jupyter-minimal-notebook-sbom.tf
-      
-      - name: Upload Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-and-sbom-reports
-          path: |
-            Jupyter-minimal-notebook-Trivy.csv
-            Jupyter-minimal-notebook-sbom.tf
 
       - name: Download Jupyter-scipy-notebook Docker Image from ECR
         env:
@@ -338,13 +317,6 @@ jobs:
         run: |
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
           syft $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG  > jupyter-scipy-notebook-sbom.tf
-      - name: Upload Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-and-sbom-reports
-          path: |
-            jupyter-scipy-notebook-Trivy.csv
-            jupyter-scipy-notebook-sbom.tf
 
       - name: Download Jupyter-datascience-notebook Docker Image from ECR
         env:
@@ -390,7 +362,15 @@ jobs:
       - name: Upload Reports
         uses: actions/upload-artifact@v4
         with:
-          name: trivy-and-sbom-reports
+          name: Jupyter Notebooks trivy-and-sbom-reports
           path: |
             Jupyter-datascience-notebook-Trivy.csv
-            Jupyter-datascience-notebook-sbom.tf 
+            Jupyter-datascience-notebook-sbom.tf
+            jupyter-scipy-notebook-Trivy.csv
+            jupyter-scipy-notebook-sbom.tf
+            Jupyter-minimal-notebook-Trivy.csv
+            Jupyter-minimal-notebook-sbom.tf
+            Jupyter-base-notebook-Trivy.csv
+            Jupyter-base-notebook-sbom.tf
+            Jupyter-Docker-Stacks-Foundation-Trivy.csv
+            Jupyter-Docker-Stacks-Foundation-sbom.tf
