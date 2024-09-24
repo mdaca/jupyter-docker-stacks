@@ -118,3 +118,24 @@ jobs:
           aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
           aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
           aws configure set default.region $AWS_REGION
+
+          # Get token from ECR and Docker login
+          aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+          IMAGE_TAG=5.1.0
+
+          # Set ENV for Docker build
+          ECR_REPOSITORY=mdaca/jupyter/jupyter-scipy-notebook
+          REPOSITORY=$ECR_REPOSITORY
+          REGISTRY=201959883603.dkr.ecr.us-east-2.amazonaws.com
+
+          # Build the Docker image
+          docker build -f images/scipy-notebook/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG images/scipy-notebook
+
+          # Push the Docker image
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+
+          # Add latest tag
+          docker tag $REGISTRY/$REPOSITORY:$IMAGE_TAG $REGISTRY/$REPOSITORY:latest
+
+          # push latest Docker Image
+          docker push $REGISTRY/$REPOSITORY:latest
